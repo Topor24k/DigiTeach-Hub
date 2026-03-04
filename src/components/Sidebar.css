@@ -92,6 +92,33 @@
   padding: 12px 28px 4px;
 }
 
+.sidebar__section-label--lms {
+  color: var(--color-primary);
+  opacity: 0.85;
+}
+
+/* ── Nav badge ── */
+.sidebar__nav-badge {
+  margin-left: auto;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  line-height: 1;
+}
+
+/* ── Small nav (Program section) ── */
+.sidebar__nav--sm {
+  flex: none;
+}
+
 /* ── Divider ── */
 .sidebar__divider {
   height: 1px;

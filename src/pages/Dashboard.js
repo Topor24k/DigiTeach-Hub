@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
 import MainContent from '../components/MainContent';
+import LMSPage from './LMSPage';
 import './Dashboard.css';
 
 const SECTIONS = [
@@ -19,9 +20,12 @@ const SECTIONS = [
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const [currentPage, setCurrentPage] = useState('home');
 
-  /* ── Scroll-spy: highlights sidebar link matching visible section ── */
+  /* ── Scroll-spy: only active when on the Home page ── */
   useEffect(() => {
+    if (currentPage !== 'home') return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -39,7 +43,7 @@ const Dashboard = () => {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [currentPage]);
 
   return (
     <div className="dashboard">
@@ -47,11 +51,13 @@ const Dashboard = () => {
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         activeSection={activeSection}
+        currentPage={currentPage}
+        onNavigate={setCurrentPage}
       />
 
       <div className="dashboard__body">
         <TopBar onMenuClick={() => setSidebarOpen(true)} />
-        <MainContent />
+        {currentPage === 'home' ? <MainContent /> : <LMSPage page={currentPage} />}
       </div>
     </div>
   );

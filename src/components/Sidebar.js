@@ -1,39 +1,49 @@
 import React from 'react';
 import {
   BsHouseDoor,
-  BsJournalText,
-  BsBullseye,
-  BsCalendar2Week,
-  BsPeopleFill,
-  BsTrophy,
-  BsLightbulb,
-  BsBookHalf,
-  BsEnvelope,
   BsXLg,
+  BsClipboardCheck,
+  BsCalendarEvent,
+  BsBook,
+  BsFolder2Open,
+  BsChatDots,
+  BsBarChartLine,
+  BsMegaphone,
+  BsPeopleFill,
 } from 'react-icons/bs';
 import dhLogo from '../assets/DH logo.png';
 import './Sidebar.css';
 
-const navItems = [
-  { icon: <BsHouseDoor />, label: 'Home', href: '#home' },
-  { icon: <BsJournalText />, label: 'Rationale', href: '#rationale' },
-  { icon: <BsBullseye />, label: 'Objectives', href: '#objectives' },
-  { icon: <BsCalendar2Week />, label: 'Program Phases', href: '#phases' },
-  { icon: <BsPeopleFill />, label: 'Facilitators', href: '#facilitators' },
-  { icon: <BsTrophy />, label: 'Expected Outcomes', href: '#outcomes' },
-  { icon: <BsLightbulb />, label: 'Innovation', href: '#innovation' },
-  { icon: <BsBookHalf />, label: 'References', href: '#references' },
-  { icon: <BsEnvelope />, label: 'Contact', href: '#contact' },
+const programItems = [
+  { id: 'home', icon: <BsHouseDoor />, label: 'Home' },
 ];
 
-const Sidebar = ({ isOpen, onClose, activeSection }) => {
-  const handleClick = (e, href) => {
+const lmsItems = [
+  { id: 'activities',    icon: <BsClipboardCheck />, label: 'Activities',     badge: '3' },
+  { id: 'calendar',     icon: <BsCalendarEvent />,  label: 'Calendar'                  },
+  { id: 'modules',      icon: <BsBook />,           label: 'Modules'                   },
+  { id: 'resources',    icon: <BsFolder2Open />,    label: 'Resources'                 },
+  { id: 'assist',       icon: <BsChatDots />,       label: 'Assist'                    },
+  { id: 'progress',     icon: <BsBarChartLine />,   label: 'Progress'                  },
+  { id: 'announcements',icon: <BsMegaphone />,      label: 'Announcements', badge: '1' },
+  { id: 'community',    icon: <BsPeopleFill />,     label: 'Community'                 },
+];
+
+const Sidebar = ({ isOpen, onClose, activeSection, currentPage, onNavigate }) => {
+  const handleHomeClick = (e) => {
     e.preventDefault();
+    onNavigate('home');
     onClose();
-    const el = document.querySelector(href);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    setTimeout(() => {
+      const el = document.getElementById('home');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+  };
+
+  const handleLMSClick = (e, id) => {
+    e.preventDefault();
+    onNavigate(id);
+    onClose();
   };
 
   return (
@@ -64,22 +74,46 @@ const Sidebar = ({ isOpen, onClose, activeSection }) => {
         {/* Divider */}
         <div className="sidebar__divider" />
 
-        {/* Section label */}
+        {/* ── Program section ── */}
         <span className="sidebar__section-label">Program</span>
-
-        {/* Navigation */}
-        <nav className="sidebar__nav">
-          {navItems.map((item, index) => {
-            const isActive = activeSection === item.href.replace('#', '');
+        <nav className="sidebar__nav sidebar__nav--sm">
+          {programItems.map((item) => {
+            const isActive = currentPage === 'home';
             return (
               <a
-                href={item.href}
-                key={index}
+                href="#home"
+                key={item.id}
                 className={`sidebar__nav-item${isActive ? ' sidebar__nav-item--active' : ''}`}
-                onClick={(e) => handleClick(e, item.href)}
+                onClick={handleHomeClick}
               >
                 <span className="sidebar__nav-icon">{item.icon}</span>
                 <span className="sidebar__nav-label">{item.label}</span>
+                {isActive && <span className="sidebar__nav-indicator" />}
+              </a>
+            );
+          })}
+        </nav>
+
+        {/* Divider */}
+        <div className="sidebar__divider" />
+
+        {/* ── Learning Hub (LMS) section ── */}
+        <span className="sidebar__section-label sidebar__section-label--lms">Learning Hub</span>
+        <nav className="sidebar__nav">
+          {lmsItems.map((item) => {
+            const isActive = currentPage === item.id;
+            return (
+              <a
+                href={`#${item.id}`}
+                key={item.id}
+                className={`sidebar__nav-item${isActive ? ' sidebar__nav-item--active' : ''}`}
+                onClick={(e) => handleLMSClick(e, item.id)}
+              >
+                <span className="sidebar__nav-icon">{item.icon}</span>
+                <span className="sidebar__nav-label">{item.label}</span>
+                {item.badge && (
+                  <span className="sidebar__nav-badge">{item.badge}</span>
+                )}
                 {isActive && <span className="sidebar__nav-indicator" />}
               </a>
             );
