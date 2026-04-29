@@ -1,8 +1,8 @@
 import React from 'react';
-import { BsList, BsBell, BsSearch } from 'react-icons/bs';
+import { BsList, BsBell, BsSearch, BsGear } from 'react-icons/bs';
 import './TopBar.css';
 
-const TopBar = ({ onMenuClick }) => {
+const TopBar = ({ onMenuClick, onAdminClick }) => {
   return (
     <header className="topbar">
       <button className="topbar__menu" onClick={onMenuClick} aria-label="Open menu">
@@ -15,7 +15,7 @@ const TopBar = ({ onMenuClick }) => {
         <input
           className="topbar__search-input"
           type="text"
-          placeholder="Search program phases, resources, objectives..."
+          placeholder="Search program lessons, resources, objectives..."
         />
       </div>
 
@@ -24,6 +24,11 @@ const TopBar = ({ onMenuClick }) => {
         <button className="topbar__icon-btn" aria-label="Notifications">
           <BsBell />
           <span className="topbar__badge">0</span>
+        </button>
+
+        {/* Admin */}
+        <button className="topbar__icon-btn" aria-label="Admin" title="Open Admin Panel" onClick={onAdminClick}>
+          <BsGear />
         </button>
 
         {/* User */}
