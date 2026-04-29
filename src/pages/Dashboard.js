@@ -3,13 +3,14 @@ import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
 import MainContent from '../components/MainContent';
 import LMSPage from './LMSPage';
+import AdminPanel from '../components/AdminPanel';
 import './Dashboard.css';
 
 const SECTIONS = [
   'home',
   'rationale',
   'objectives',
-  'phases',
+  'lessons',
   'facilitators',
   'outcomes',
   'innovation',
@@ -21,6 +22,7 @@ const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [currentPage, setCurrentPage] = useState('home');
+  const [adminOpen, setAdminOpen] = useState(false);
 
   /* ── Scroll-spy: only active when on the Home page ── */
   useEffect(() => {
@@ -56,9 +58,11 @@ const Dashboard = () => {
       />
 
       <div className="dashboard__body">
-        <TopBar onMenuClick={() => setSidebarOpen(true)} />
+        <TopBar onMenuClick={() => setSidebarOpen(true)} onAdminClick={() => setAdminOpen(true)} />
         {currentPage === 'home' ? <MainContent /> : <LMSPage page={currentPage} />}
       </div>
+
+      {adminOpen && <AdminPanel onClose={() => setAdminOpen(false)} />}
     </div>
   );
 };
