@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   BsLaptop,
   BsPeopleFill,
@@ -27,148 +27,112 @@ import hersheyImg from '../assets/Hershey Image Icon.png';
 import shuvyImg from '../assets/Shuvy Image Icon.png';
 import johnImg from '../assets/John Image Icon.png';
 import './MainContent.css';
+import {
+  getFacilitators, getStats, getPhases, getObjectives, getOutcomes, getChallenges, getReferences
+} from '../utils/api';
 
-/* ── Data ── */
-const facilitators = [
-  {
-    name: 'Hershey Nicolle N. Tabanao',
-    role: 'Program Facilitator',
-    description:
-      'Advocating for the UM DigiTeach Hub to empower pre-service teachers with essential digital skills, innovative teaching strategies, and confidence to thrive in modern learning environments.',
-    image: hersheyImg,
-  },
-  {
-    name: 'Shuvy Miles C. Espiritouso',
-    role: 'Program Facilitator',
-    description:
-      'Committed to strengthening future educators through hands-on training in instructional design, digital content creation, and effective virtual classroom management.',
-    image: shuvyImg,
-  },
-  {
-    name: 'John Louise Clark A. Panes',
-    role: 'Program Facilitator',
-    description:
-      'Supporting a forward-thinking program that prepares pre-service teachers to deliver engaging, student-centered, and technology-enhanced lessons for 21st-century education.',
-    image: johnImg,
-  },
-  {
-    name: 'Glyza Sheene D. Lapaz',
-    role: 'Program Facilitator',
-    description:
-      'Dedicated to equipping future teachers with the digital literacy and pedagogical tools needed to design transformative learning experiences in both physical and virtual classrooms.',
-    avatarColor: '#9b59b6',
-  },
-  {
-    name: 'Ruvie Ann C. Alba',
-    role: 'Program Facilitator',
-    description:
-      'Passionate about bridging the digital gap in education by guiding pre-service teachers in developing technology-enhanced instructional materials aligned with 21st-century competency standards.',
-    avatarColor: '#e91e8c',
-  },
-];
-
-const stats = [
-  { icon: <BsMortarboard />, value: '6', label: 'Week Intensive Program' },
-  { icon: <BsPeopleFill />, value: '3rd Yr', label: 'Pre-Service Teachers' },
-  { icon: <BsLaptop />, value: '4', label: 'Structured Phases' },
-  { icon: <BsAward />, value: '100%', label: 'Hands-On Training' },
-];
-
-const phases = [
-  {
-    week: 'Week 1',
-    title: 'Diagnostic Assessment & Strategic Orientation',
-    icon: <BsSearch />,
-    desc: 'Comprehensive needs assessment aligned with CHED ICT Competency Standards to identify participants\u2019 strengths and areas for improvement. Results guide individualized learning plans.',
-    output: 'Individualized Learning Plan',
-    color: '#3498db',
-  },
-  {
-    week: 'Weeks 2\u20133',
-    title: 'Intensive Workshops & Digital Content Creation',
-    icon: <BsTools />,
-    desc: 'Hands-on workshops transforming existing lesson plans into interactive, technology-integrated formats for online and face-to-face instruction. Focus on multimedia tools, online platforms, and assessment strategies.',
-    output: 'Interactive Lesson Modules',
-    color: '#e67e22',
-  },
-  {
-    week: 'Weeks 4\u20135',
-    title: 'Mentorship, Monitoring & Formative Evaluation',
-    icon: <BsPersonWorkspace />,
-    desc: 'Structured mentorship with faculty mentors providing constructive guidance ensuring digital instructional materials meet professional standards. Continuous feedback for meaningful technology integration.',
-    output: 'Peer/Mentor-Reviewed Materials',
-    color: '#2ecc71',
-  },
-  {
-    week: 'Week 6',
-    title: 'Readiness Showcase & E-Portfolio Finalization',
-    icon: <BsJournalBookmark />,
-    desc: 'Development of a professional E-Portfolio compiling best digital lesson plans, instructional materials, and recorded demo teaching sessions as proof of teaching readiness.',
-    output: 'Professional Digital Portfolio',
-    color: '#9b59b6',
-  },
-];
-
-const objectives = [
-  {
-    icon: <BsGear />,
-    title: 'Develop & Implement',
-    text: 'Provide structured, hands-on training in online teaching strategies, digital content creation, and LMS utilization for pre-service teachers.',
-  },
-  {
-    icon: <BsGraphUpArrow />,
-    title: 'Measure Competence',
-    text: 'Determine digital teaching competence before and after participation through validated assessments, performance-based outputs, and practicum evaluations.',
-  },
-  {
-    icon: <BsClipboard2Check />,
-    title: 'Align with Standards',
-    text: 'Ensure alignment with CHED digital learning competencies and UM CTE institutional outcomes in preparing 21st-century educators.',
-  },
-];
-
-const outcomes = [
-  'Stronger skills in designing technology-integrated lesson plans and utilizing learning management systems.',
-  'Measurable improvements in digital pedagogical competencies through pre- and post-assessments.',
-  'Ability to design interactive learning modules and apply appropriate digital tools for instruction.',
-  'Professional digital teaching portfolios with instructional materials, demo recordings, and reflective documentation.',
-  'Enhanced readiness for the fourth-year internship and future professional teaching roles.',
-  'Pre-service teachers better equipped to meet the demands of 21st-century classrooms.',
-];
-
-const challenges = [
-  {
-    icon: <BsExclamationTriangle />,
-    challenge: 'Digital Disparity',
-    impact: 'Uneven access to hardware',
-    mitigation: 'Extended on-campus laboratory hours',
-  },
-  {
-    icon: <BsExclamationTriangle />,
-    challenge: 'Summer Fatigue',
-    impact: 'Potential drop in engagement',
-    mitigation: 'Gamified workshops & regular check-in sessions',
-  },
-  {
-    icon: <BsShieldCheck />,
-    challenge: 'Internet Instability',
-    impact: 'Interrupted online activities',
-    mitigation: 'Offline-capable tools & pre-loaded OERs',
-  },
-];
-
-const references = [
-  'Belda, J. R., et al. (2025). Bridging the digital gap: An analysis of perceived vs. actual ICT competence among Filipino pre-service teachers. Journal of Interactive Learning Research, 36(1), 45\u201362.',
-  'Commission on Higher Education (CHED). (2022). CHED Memorandum Order on the implementation of flexible learning in higher education institutions.',
-  'Department of Education (DepEd). (2025). Quality Basic Education Development Plan (Q-BEDP) 2025\u20132035.',
-  'Department of Education (DepEd). (2026). National report on digital disparity and infrastructure challenges in remote learning.',
-  'RSIS International. (2026). Digital professional identity: The role of e-portfolios in teacher education programs in Southeast Asia. IJRISS, 10(2), 112\u2013128.',
-  'Valdez, P. N., et al. (2021). Digital pedagogy and student-centered online lessons. Philippine Journal of Science and Education, 4(3), 88\u2013104.',
-];
+// Icon mapping for database icons stored as strings
+const iconMap = {
+  'BsSearch': <BsSearch />,
+  'BsTools': <BsTools />,
+  'BsPersonWorkspace': <BsPersonWorkspace />,
+  'BsJournalBookmark': <BsJournalBookmark />,
+  'BsGear': <BsGear />,
+  'BsGraphUpArrow': <BsGraphUpArrow />,
+  'BsClipboard2Check': <BsClipboard2Check />,
+  'BsExclamationTriangle': <BsExclamationTriangle />,
+  'BsShieldCheck': <BsShieldCheck />,
+  'BsMortarboard': <BsMortarboard />,
+  'BsPeopleFill': <BsPeopleFill />,
+  'BsLaptop': <BsLaptop />,
+  'BsAward': <BsAward />,
+  'BsLightbulb': <BsLightbulb />,
+  'BsBarChartLine': <BsBarChartLine />,
+  'BsBookHalf': <BsBookHalf />,
+  'BsPersonWorkspace': <BsPersonWorkspace />,
+};
 
 /* ── Component ── */
 const MainContent = () => {
   const facilitatorsRef = useRef(null);
+  
+  // State for API data
+  const [facilitators, setFacilitators] = useState([]);
+  const [stats, setStats] = useState([]);
+  const [phases, setPhases] = useState([]);
+  const [objectives, setObjectives] = useState([]);
+  const [outcomes, setOutcomes] = useState([]);
+  const [challenges, setChallenges] = useState([]);
+  const [references, setReferences] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch data from API on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [
+          facilitatorsData, statsData, phasesData, objectivesData, outcomesData, challengesData, referencesData
+        ] = await Promise.all([
+          getFacilitators(),
+          getStats(),
+          getPhases(),
+          getObjectives(),
+          getOutcomes(),
+          getChallenges(),
+          getReferences()
+        ]);
+
+        // Map image paths for facilitators
+        setFacilitators(facilitatorsData.map(f => ({
+          ...f,
+          image: f.image ? (f.image.startsWith('http') || f.image.startsWith('/') ? f.image : `/assets/${f.image}`) : null
+        })));
+        
+        // Map icons for stats
+        setStats(statsData.map(s => ({
+          ...s,
+          icon: iconMap[s.icon] || <BsMortarboard />
+        })));
+        
+        // Map icons and descs for phases
+        setPhases(phasesData.map(p => ({
+          ...p,
+          icon: iconMap[p.icon] || <BsSearch />,
+          desc: p.description || p.desc
+        })));
+        
+        // Map icons for objectives
+        setObjectives(objectivesData.map(o => ({
+          ...o,
+          icon: iconMap[o.icon] || <BsGear />
+        })));
+        
+        // Handle outcomes as text array
+        setOutcomes(outcomesData.map(o => o.text || o));
+        
+        // Map icons for challenges
+        setChallenges(challengesData.map(c => ({
+          ...c,
+          icon: iconMap[c.icon] || <BsExclamationTriangle />
+        })));
+        
+        // Map references as text array
+        setReferences(referencesData.map(r => r.text || r));
+        
+        setError(null);
+      } catch (err) {
+        console.error('Failed to fetch data:', err);
+        setError(err.message);
+        // Keep existing data on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const scrollFacilitators = (dir) => {
     const grid = facilitatorsRef.current;
@@ -196,12 +160,10 @@ const MainContent = () => {
             <span className="hero__title-accent">Hub</span>
           </h1>
           <p className="hero__desc">
-            A six-week intensive summer training program empowering pre-service
-            teachers with digital skills, innovative strategies, and confidence
-            for effective 21st-century teaching.
+            Blended learning made simple, engaging, and accessible.
           </p>
           <div className="hero__actions">
-            <a href="#phases" className="hero__btn hero__btn--primary">
+            <a href="#lessons" className="hero__btn hero__btn--primary">
               Explore the Program <BsArrowRight />
             </a>
             <a href="#facilitators" className="hero__btn hero__btn--outline">
@@ -240,40 +202,10 @@ const MainContent = () => {
             </p>
           </div>
 
-          <div className="rationale__grid">
-            <div className="rationale__card">
-              <div className="rationale__card-num">01</div>
-              <h3>The Digital Gap</h3>
-              <p>
-                The COVID-19 pandemic highlighted the urgent need for effective online
-                teaching strategies. Even six years later, UM CTE still faces challenges
-                in fully integrating digital teaching methods. Many pre-service teachers
-                are not yet fully confident in designing online lessons, managing virtual
-                classrooms, and using digital tools to engage students effectively.
-              </p>
-            </div>
-            <div className="rationale__card">
-              <div className="rationale__card-num">02</div>
-              <h3>Teacher Readiness Crisis</h3>
-              <p>
-                Research shows that teacher readiness is a critical factor in online
-                learning success. Despite many Philippine HEIs adopting online learning,
-                less than half of pre-service teachers feel confident using digital tools
-                effectively (CHED, 2022). This gap affects instruction quality and limits
-                student learning experiences.
-              </p>
-            </div>
-            <div className="rationale__card">
-              <div className="rationale__card-num">03</div>
-              <h3>A Targeted Intervention</h3>
-              <p>
-                Teachers proficient in digital pedagogy are more capable of delivering
-                interactive and student-centered online lessons (Valdez et al., 2021).
-                The UM DigiTeach Hub provides hands-on training in online teaching
-                strategies, digital content creation, and effective use of learning
-                management systems.
-              </p>
-            </div>
+          <div className="rationale__content">
+            <p>
+              UM DigiTech Hub was developed as the University of Mindanao’s official platform for blended learning. Its primary purpose is to provide a medium where teachers can design and deliver online activities, and students can access, complete, and submit tasks in a centralized space. By integrating multimedia, interactive tools, and assessment features, the Hub supports flexible teaching and learning, enhances engagement, and ensures that academic activities can continue seamlessly both inside and outside the classroom.
+            </p>
           </div>
         </div>
       </section>
@@ -302,12 +234,12 @@ const MainContent = () => {
         </div>
       </section>
 
-      {/* ═══════ IMPLEMENTATION PHASES ═══════ */}
-      <section className="section section--white" id="phases">
+      {/* ═══════ IMPLEMENTATION LESSONS ═══════ */}
+      <section className="section section--white" id="lessons">
         <div className="section__container">
           <div className="section-header">
             <span className="section-header__badge">Implementation Plan</span>
-            <h2 className="section-header__title">Program Phases</h2>
+            <h2 className="section-header__title">Lessons</h2>
             <p className="section-header__subtitle">
               A structured 6-week training journey from diagnostic assessment to
               professional portfolio showcase.
@@ -315,7 +247,7 @@ const MainContent = () => {
           </div>
 
           <div className="phases__timeline">
-            {phases.map((phase, i) => (
+              {phases.map((phase, i) => (
               <div className="phase-card" key={i}>
                 <div className="phase-card__marker" style={{ background: phase.color }}>
                   <span className="phase-card__icon">{phase.icon}</span>
@@ -331,7 +263,7 @@ const MainContent = () => {
                   </span>
                 </div>
               </div>
-            ))}
+              ))}
           </div>
         </div>
       </section>
@@ -385,14 +317,14 @@ const MainContent = () => {
         <div className="section__container">
           <div className="section-header">
             <span className="section-header__badge">Results</span>
-            <h2 className="section-header__title">Expected Outcomes</h2>
+            <h2 className="section-header__title">Expected Outcomes:</h2>
             <p className="section-header__subtitle">
               What participants will gain from the UM DigiTeach Hub program.
             </p>
           </div>
 
           <div className="outcomes__grid">
-            {outcomes.map((item, i) => (
+              {outcomes.map((item, i) => (
               <div className="outcome-card" key={i}>
                 <div className="outcome-card__num">{String(i + 1).padStart(2, '0')}</div>
                 <p className="outcome-card__text">{item}</p>
@@ -455,7 +387,7 @@ const MainContent = () => {
             </div>
             <div className="innovation__card">
               <BsBarChartLine className="innovation__card-icon" />
-              <h3>Four-Phase Framework</h3>
+              <h3>Four-Lesson Framework</h3>
               <p>
                 A systematic progression from diagnostic assessment aligned with CHED ICT
                 standards, through intensive training, mentorship, and culminating in a
@@ -509,9 +441,8 @@ const MainContent = () => {
             <span className="section-header__badge">Get in Touch</span>
             <h2 className="section-header__title">Interested in Joining?</h2>
             <p className="section-header__subtitle">
-              The UM DigiTeach Hub welcomes third-year pre-service teachers from
-              the University of Mindanao College of Teacher Education. Participation
-              is voluntary and offers a Certificate of Completion with digital
+              The UM DigiTeach Hub welcomes 8th Grade Students from the relevant
+              schools. Participation is voluntary and offers a Certificate of Completion with digital
               competency credentials.
             </p>
           </div>
@@ -519,8 +450,8 @@ const MainContent = () => {
           <div className="contact__cards">
             <div className="contact__card">
               <BsMortarboard className="contact__card-icon" />
-              <h3>For Students</h3>
-              <p>Enroll during the summer transition between 3rd and 4th year. Morning and afternoon sessions available (4 hours each).</p>
+                <h3>For Students</h3>
+                <p>Enrollment details available via your school coordinator. Sessions scheduled as announced.</p>
             </div>
             <div className="contact__card">
               <BsPersonWorkspace className="contact__card-icon" />
@@ -559,7 +490,7 @@ const MainContent = () => {
               <h4>Program</h4>
               <a href="#rationale">Rationale</a>
               <a href="#objectives">Objectives</a>
-              <a href="#phases">Phases</a>
+              <a href="#lessons">Lessons</a>
             </div>
             <div className="main-footer__nav-col">
               <h4>About</h4>
